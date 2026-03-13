@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gluggy">
+<meta name="theme-color" content="#2d1b69">
+<title>Gluggy 💧</title>
+<style>
+:root {
+  --p0: #f5f3ff;
+  --p1: #ede9fe;
+  --p2: #ddd6fe;
+  --p3: #c4b5fd;
+  --p4: #a78bfa;
+  --p5: #7c3aed;
+  --p6: #5b21b6;
+  --p7: #4c1d95;
+  --p8: #2d1b69;
+  --p9: #1e1040;
+  --glass: rgba(255,255,255,0.08);
+  --glass-border: rgba(255,255,255,0.15);
+  --glass-strong: rgba(255,255,255,0.13);
+  --text: #f0edff;
+  --text-dim: rgba(240,237,255,0.55);
+  --text-muted: rgba(240,237,255,0.35);
+  --radius-sm: 14px;
+  --radius: 22px;
+  --radius-lg: 32px;
+  --tab-h: calc(72px + env(safe-area-inset-bottom));
+  --header-h: calc(56px + env(safe-area-inset-top));
+  --font: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+}
+.light-mode {
+  --glass: rgba(255,255,255,0.55);
+  --glass-border: rgba(255,255,255,0.7);
+  --glass-strong: rgba(255,255,255,0.7);
+  --text: #1e1040;
+  --text-dim: rgba(30,16,64,0.6);
+  --text-muted: rgba(30,16,64,0.38);
+  --p9: #f0edff;
+  --p8: #e9e2ff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; font-family: var(--font); }
+body {
+  background: var(--p9);
+  color: var(--text);
+  position: relative;
+  overflow: hidden;
+}
+/* Animated Background */
+#bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: linear-gradient(160deg, var(--p9) 0%, var(--p8) 40%, #1a0a4e 100%);
+  overflow: hidden;
+}
+.blob {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); opacity: 0.35;
+  animation: blobFloat 12s ease-in-out infinite;
+}
+.blob1 { width: 340px; height: 340px; background: radial-gradient(circle, #7c3aed, #4c1d95); top: -80px; left: -80px; animation-delay: 0s; }
+.blob2 { width: 260px; height: 260px; background: radial-gradient(circle, #a78bfa, #7c3aed); top: 30%; right: -60px; animation-delay: -4s; }
+.blob3 { width: 200px; height: 200px; background: radial-gradient(circle, #c4b5fd, #a78bfa); bottom: 20%; left: 10%; animation-delay: -8s; }
+.blob4 { width: 180px; height: 180px; background: radial-gradient(circle, #ec4899, #7c3aed); top: 60%; right: 20%; animation-delay: -2s; }
+@keyframes blobFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(20px,-30px) scale(1.08); }
+  66% { transform: translate(-15px,20px) scale(0.95); }
+}
+.light-mode #bg { background: linear-gradient(160deg, #e9e2ff 0%, #ddd6fe 40%, #c4b5fd 100%); }
+.light-mode .blob { opacity: 0.18; }
+
+/* App Shell */
+#app { position: fixed; inset: 0; z-index: 1; display: flex; flex-direction: column; }
+
+/* Tabs */
+.tab-content { display: none; flex: 1; overflow: hidden; flex-direction: column; }
+.tab-content.active { display: flex; }
+
+/* TAB BAR */
+#tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  height: var(--tab-h);
+  backdrop-filter: blur(28px) saturate(1.8);
+  -webkit-backdrop-filter: blur(28px) saturate(1.8);
+  background: rgba(30,16,64,0.6);
+  border-top: 1px solid var(--glass-border);
+  display: flex; align-items: flex-start;
+  padding-top: 10px;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -1px 0 rgba(255,255,255,0.08), 0 -8px 32px rgba(0,0,0,0.3);
+}
+.light-mode #tabbar { background: rgba(237,233,254,0.75); }
+.tab-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: none; border: none; cursor: pointer; color: var(--text-muted);
+  font-size: 10px; font-family: var(--font); font-weight: 500;
+  padding: 4px 0; transition: color 0.2s;
+}
+.tab-btn .tab-icon { font-size: 22px; transition: transform 0.2s; }
+.tab-btn.active { color: var(--p3); }
+.tab-btn.active .tab-icon { transform: scale(1.15); }
+
+/* GLASS CARD */
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border-radius: var(--radius);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 24px rgba(0,0,0,0.18);
+}
+.glass-strong {
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(32px) saturate(1.8);
+  -webkit-backdrop-filter: blur(32px) saturate(1.8);
+  border-radius: var(--radius);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 32px rgba(0,0,0,0.22);
+}
+
+/* SCROLL CONTAINER */
+.scroll-view {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: calc(var(--header-h) + 12px) 16px calc(var(--tab-h) + 16px);
+}
+.scroll-view::-webkit-scrollbar { display: none; }
+
+/* ============ ONBOARDING ============ */
+#onboarding-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(10,5,30,0.85);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+#onboarding-sheet {
+  width: 100%; max-width: 480px;
+  background: linear-gradient(160deg, rgba(74,40,180,0.85), rgba(30,16,64,0.92));
+  border: 1px solid rgba(196,181,253,0.25);
+  border-radius: 36px 36px 0 0;
+  backdrop-filter: blur(40px);
+  padding: 28px 24px 40px;
+  box-shadow: 0 -20px 60px rgba(0,0,0,0.5);
+}
+.onboarding-dot-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+.onboarding-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(196,181,253,0.3); transition: all 0.3s; }
+.onboarding-dot.active { background: var(--p3); width: 22px; border-radius: 4px; }
+.onboarding-step { display: none; animation: slideIn 0.4s ease; }
+.onboarding-step.active { display: block; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+.onboarding-emoji { font-size: 52px; text-align: center; display: block; margin-bottom: 12px; }
+.onboarding-title { font-size: 26px; font-weight: 700; text-align: center; color: var(--p2); margin-bottom: 8px; }
+.onboarding-sub { font-size: 15px; color: var(--text-dim); text-align: center; margin-bottom: 24px; line-height: 1.5; }
+.ob-input {
+  width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(196,181,253,0.3);
+  border-radius: var(--radius-sm); color: white; font-size: 20px; font-weight: 600;
+  text-align: center; padding: 16px; font-family: var(--font); outline: none;
+  -webkit-appearance: none;
+}
+.ob-input:focus { border-color: var(--p4); background: rgba(255,255,255,0.13); }
+.ob-range { width: 100%; accent-color: var(--p4); margin: 12px 0; height: 6px; }
+.ob-label { color: var(--text-dim); font-size: 13px; text-align: center; }
+.btn-primary {
+  width: 100%; padding: 17px; border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--p5), var(--p7));
+  border: 1px solid rgba(196,181,253,0.3);
+  color: white; font-size: 17px; font-weight: 700; font-family: var(--font);
+  cursor: pointer; margin-top: 20px;
+  box-shadow: 0 0 20px rgba(124,58,237,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-primary:active { transform: scale(0.97); box-shadow: 0 0 10px rgba(124,58,237,0.3); }
+
+/* ============ HOME TAB ============ */
+.date-pill-row {
+  display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 20px;
+}
+.arrow-btn {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: 50%; width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--p3); font-size: 16px;
+  backdrop-filter: blur(16px); transition: background 0.2s;
+}
+.arrow-btn:active { background: rgba(167,139,250,0.2); }
+.date-pill {
+  background: var(--glass-strong); border: 1px solid var(--glass-border);
+  border-radius: 99px; padding: 8px 20px;
+  font-size: 15px; font-weight: 600; color: var(--p2);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
+}
+
+/* WAVE CIRCLE */
+#wave-container {
+  width: 220px; height: 220px; margin: 0 auto 24px;
+  position: relative; cursor: pointer;
+}
+#wave-wrap {
+  width: 100%; height: 100%; border-radius: 50%;
+  overflow: hidden; position: relative;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(196,181,253,0.25);
+  box-shadow: 0 0 0 6px rgba(196,181,253,0.07), 0 0 40px rgba(124,58,237,0.3), inset 0 2px 0 rgba(255,255,255,0.12);
+}
+#wave-bg { position: absolute; inset: 0; background: rgba(30,16,64,0.5); }
+#wave-svg { position: absolute; bottom: 0; left: 0; width: 100%; transition: height 0.8s cubic-bezier(.4,0,.2,1); }
+.wave-text {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 2; pointer-events: none;
+}
+#wave-ml { font-size: 34px; font-weight: 800; color: white; letter-spacing: -1px; }
+#wave-goal { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+#wave-pct { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+/* Confetti */
+.confetti-piece {
+  position: fixed; pointer-events: none; z-index: 999;
+  width: 8px; height: 8px; border-radius: 2px;
+  animation: confettiFall 1.5s ease-in forwards;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(400px) rotate(720deg); opacity: 0; }
+}
+
+/* VESSEL PILLS */
+#vessel-scroll {
+  display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px;
+}
+#vessel-scroll::-webkit-scrollbar { display: none; }
+.vessel-pill {
+  flex-shrink: 0;
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: 99px; padding: 10px 18px;
+  font-size: 14px; font-weight: 600; color: var(--text-dim);
+  cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  backdrop-filter: blur(16px);
+}
+.vessel-pill.selected {
+  background: linear-gradient(135deg, rgba(124,58,237,0.4), rgba(76,29,149,0.4));
+  border-color: var(--p4); color: var(--p3);
+  box-shadow: 0 0 12px rgba(124,58,237,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.vessel-pill.add-btn {
+  background: rgba(255,255,255,0.06); border-style: dashed;
+  color: var(--text-muted); font-size: 18px; padding: 8px 14px;
+}
+
+/* ML INPUT ROW */
+.ml-input-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.ml-input {
+  flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(196,181,253,0.2);
+  border-radius: var(--radius-sm); color: white; font-size: 22px; font-weight: 700;
+  text-align: center; padding: 14px; font-family: var(--font); outline: none;
+  -webkit-appearance: none;
+}
+.ml-input:focus { border-color: var(--p4); }
+.ml-unit { color: var(--text-dim); font-size: 15px; font-weight: 500; }
+
+/* DRINK BUTTON */
+#drink-btn {
+  width: 100%; padding: 18px; border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--p4), var(--p6));
+  border: 1px solid rgba(196,181,253,0.3);
+  color: white; font-size: 18px; font-weight: 700; font-family: var(--font);
+  cursor: pointer; position: relative; overflow: hidden;
+  box-shadow: 0 0 24px rgba(124,58,237,0.45), inset 0 1px 0 rgba(255,255,255,0.18);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+#drink-btn:active { transform: scale(0.97); }
+.ripple {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  transform: scale(0); animation: rippleAnim 0.6s linear;
+  pointer-events: none;
+}
+@keyframes rippleAnim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* LOG LIST */
+.log-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; margin-bottom: 8px;
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm); backdrop-filter: blur(20px);
+  position: relative; overflow: hidden;
+  transition: transform 0.3s, opacity 0.3s;
+  touch-action: pan-y;
+}
+.log-item .log-left { display: flex; align-items: center; gap: 12px; }
+.log-icon { font-size: 20px; }
+.log-time { font-size: 13px; color: var(--text-dim); }
+.log-ml { font-size: 17px; font-weight: 700; color: var(--p3); }
+.log-delete { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 4px 8px; }
+.log-item.deleting { transform: translateX(100%); opacity: 0; }
+
+/* ============ STATS TAB ============ */
+.stats-toggle { display: flex; gap: 8px; margin-bottom: 16px; justify-content: center; }
+.toggle-btn {
+  padding: 8px 22px; border-radius: 99px; font-size: 14px; font-weight: 600;
+  font-family: var(--font); cursor: pointer; border: 1px solid var(--glass-border);
+  background: var(--glass); color: var(--text-dim); transition: all 0.2s;
+  backdrop-filter: blur(16px);
+}
+.toggle-btn.active { background: linear-gradient(135deg, rgba(124,58,237,0.4),rgba(76,29,149,0.4)); border-color: var(--p4); color: var(--p3); }
+
+/* BAR CHART */
+#chart-container {
+  width: 100%; height: 180px; position: relative;
+  margin-bottom: 20px; padding: 0 8px;
+}
+#chart-canvas { width: 100%; height: 100%; }
+.chart-tooltip {
+  position: fixed; background: rgba(30,16,64,0.9); border: 1px solid var(--p4);
+  border-radius: 10px; padding: 6px 12px; font-size: 13px; color: var(--p3);
+  pointer-events: none; display: none; z-index: 50; backdrop-filter: blur(12px);
+}
+
+/* STATS GRID */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.stat-card {
+  padding: 18px; background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: var(--radius); backdrop-filter: blur(24px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.stat-icon { font-size: 22px; margin-bottom: 6px; }
+.stat-val { font-size: 26px; font-weight: 800; color: var(--p3); line-height: 1; }
+.stat-label { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+/* ============ GARDEN TAB ============ */
+#garden-canvas-wrap {
+  width: 100%; aspect-ratio: 1/0.8;
+  position: relative; border-radius: var(--radius-lg);
+  overflow: hidden; margin-bottom: 16px;
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(180deg, rgba(76,29,149,0.15) 0%, rgba(30,60,20,0.25) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 32px rgba(0,0,0,0.2);
+}
+#garden-canvas { width: 100%; height: 100%; }
+.garden-badge {
+  text-align: center; font-size: 15px; color: var(--p2); font-weight: 600;
+  margin-bottom: 12px; padding: 10px 20px;
+}
+
+/* INFO FOLD */
+.info-card {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: var(--radius); padding: 16px;
+  backdrop-filter: blur(20px);
+}
+.info-toggle {
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; font-size: 15px; font-weight: 600; color: var(--p3);
+}
+.info-body { display: none; margin-top: 12px; font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+.info-body.open { display: block; }
+
+/* ============ SETTINGS TAB ============ */
+.settings-section { margin-bottom: 20px; }
+.settings-label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; padding: 0 4px; }
+.setting-row {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  backdrop-filter: blur(24px); display: flex; align-items: center;
+  justify-content: space-between; padding: 16px 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.setting-row:first-of-type { border-radius: var(--radius) var(--radius) 0 0; }
+.setting-row:last-of-type { border-radius: 0 0 var(--radius) var(--radius); }
+.setting-row:only-child { border-radius: var(--radius); }
+.setting-row + .setting-row { border-top: none; }
+.setting-name { font-size: 16px; font-weight: 500; }
+.setting-val { font-size: 15px; color: var(--p4); font-weight: 600; cursor: pointer; }
+.toggle-switch {
+  width: 50px; height: 28px; border-radius: 99px; position: relative; cursor: pointer;
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.15);
+  transition: background 0.3s;
+}
+.toggle-switch.on { background: linear-gradient(135deg, var(--p5), var(--p6)); border-color: var(--p5); }
+.toggle-knob {
+  position: absolute; width: 22px; height: 22px; border-radius: 50%;
+  background: white; top: 2px; left: 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  transition: transform 0.3s;
+}
+.toggle-switch.on .toggle-knob { transform: translateX(22px); }
+.vessel-setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; margin-bottom: 8px;
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm); backdrop-filter: blur(20px);
+}
+.vessel-del-btn { background: none; border: none; color: #f87171; font-size: 18px; cursor: pointer; }
+.danger-btn {
+  width: 100%; padding: 16px; border-radius: var(--radius-sm);
+  background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3);
+  color: #fca5a5; font-size: 16px; font-weight: 600; font-family: var(--font);
+  cursor: pointer;
+}
+
+/* BOTTOM SHEET MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  display: none; align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-sheet {
+  width: 100%; max-width: 480px;
+  background: linear-gradient(160deg, rgba(74,40,180,0.9), rgba(30,16,64,0.95));
+  border: 1px solid rgba(196,181,253,0.2);
+  border-radius: 28px 28px 0 0;
+  backdrop-filter: blur(40px);
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  box-shadow: 0 -12px 48px rgba(0,0,0,0.4);
+  animation: sheetUp 0.3s ease;
+}
+@keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.25); border-radius: 2px; margin: 0 auto 16px; }
+.modal-title { font-size: 20px; font-weight: 700; color: var(--p2); margin-bottom: 16px; }
+.modal-input {
+  width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(196,181,253,0.25);
+  border-radius: var(--radius-sm); color: white; font-size: 17px; font-weight: 500;
+  padding: 14px 16px; font-family: var(--font); outline: none; margin-bottom: 12px;
+}
+.modal-input:focus { border-color: var(--p4); }
+.modal-row { display: flex; gap: 10px; }
+.btn-secondary {
+  flex: 1; padding: 15px; border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border);
+  color: var(--text-dim); font-size: 16px; font-weight: 600; font-family: var(--font); cursor: pointer;
+}
+.confirm-dialog {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center; padding: 24px;
+}
+.confirm-dialog.open { display: flex; }
+.confirm-box {
+  width: 100%; max-width: 320px;
+  background: linear-gradient(160deg, rgba(74,40,180,0.95), rgba(30,16,64,0.98));
+  border: 1px solid rgba(196,181,253,0.2);
+  border-radius: var(--radius-lg); padding: 28px 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  text-align: center;
+}
+.confirm-title { font-size: 20px; font-weight: 700; color: var(--p2); margin-bottom: 10px; }
+.confirm-msg { font-size: 15px; color: var(--text-dim); margin-bottom: 22px; line-height: 1.5; }
+.confirm-btns { display: flex; gap: 10px; }
+.app-version { text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div id="bg">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+  <div class="blob blob4"></div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="onboarding-overlay">
+  <div id="onboarding-sheet">
+    <div class="onboarding-dot-row">
+      <div class="onboarding-dot active" id="ob-dot-0"></div>
+      <div class="onboarding-dot" id="ob-dot-1"></div>
+      <div class="onboarding-dot" id="ob-dot-2"></div>
+    </div>
+    <div class="onboarding-step active" id="ob-step-0">
+      <span class="onboarding-emoji">💧</span>
+      <div class="onboarding-title">Willkommen bei Gluggy!</div>
+      <div class="onboarding-sub">Wie viel möchtest du täglich trinken?</div>
+      <input class="ob-input" type="number" id="ob-goal-input" value="2500" min="500" max="5000" step="100">
+      <input type="range" class="ob-range" id="ob-goal-range" min="500" max="5000" step="100" value="2500">
+      <div class="ob-label" id="ob-goal-label">2500 ml täglich</div>
+      <button class="btn-primary" onclick="obNext()">Weiter →</button>
+    </div>
+    <div class="onboarding-step" id="ob-step-1">
+      <span class="onboarding-emoji">🌙</span>
+      <div class="onboarding-title">Tages-Reset</div>
+      <div class="onboarding-sub">Wann soll ein neuer Tag beginnen?</div>
+      <input class="ob-input" type="time" id="ob-reset-input" value="03:00">
+      <div class="ob-label">Empfohlen: 03:00 Uhr</div>
+      <button class="btn-primary" onclick="obNext()">Weiter →</button>
+    </div>
+    <div class="onboarding-step" id="ob-step-2">
+      <span class="onboarding-emoji">🌸</span>
+      <div class="onboarding-title">Dein Blumenbeet</div>
+      <div class="onboarding-sub">Erreichst du dein Tagesziel, wächst eine neue Blume in deinem Beet.<br><br>Verpasst du ein Ziel, welkt die letzte Blume – aber du kannst sie retten!</div>
+      <button class="btn-primary" onclick="obFinish()">Los geht's! 🚀</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- HOME TAB -->
+  <div class="tab-content active" id="tab-home">
+    <div class="scroll-view" id="home-scroll">
+      <!-- Date nav -->
+      <div class="date-pill-row">
+        <button class="arrow-btn" onclick="changeDay(-1)">‹</button>
+        <div class="date-pill" id="date-display">Heute</div>
+        <button class="arrow-btn" id="next-day-btn" onclick="changeDay(1)">›</button>
+      </div>
+
+      <!-- Wave -->
+      <div id="wave-container" onclick="toggleWaveAnim()">
+        <div id="wave-wrap">
+          <div id="wave-bg"></div>
+          <svg id="wave-svg" viewBox="0 0 220 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="height:0%">
+            <defs>
+              <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#a78bfa"/>
+                <stop offset="50%" stop-color="#7c3aed"/>
+                <stop offset="100%" stop-color="#4c1d95"/>
+              </linearGradient>
+            </defs>
+            <path id="wave-path" fill="url(#waveGrad)" opacity="0.9"/>
+            <path id="wave-path2" fill="rgba(196,181,253,0.2)"/>
+          </svg>
+          <div class="wave-text">
+            <div id="wave-ml">0</div>
+            <div id="wave-goal">/ 2500 ml</div>
+            <div id="wave-pct">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add drink card -->
+      <div class="glass" style="padding:18px;margin-bottom:16px;">
+        <div id="vessel-scroll"></div>
+        <div class="ml-input-row">
+          <input class="ml-input" type="number" id="ml-input" value="250" min="10" max="2000" step="10" placeholder="ml">
+          <span class="ml-unit">ml</span>
+        </div>
+        <button id="drink-btn" onclick="addDrink()">💧 Trinken</button>
+      </div>
+
+      <!-- Log list -->
+      <div id="log-list"></div>
+      <div style="height:8px;"></div>
+    </div>
+  </div>
+
+  <!-- STATS TAB -->
+  <div class="tab-content" id="tab-stats">
+    <div class="scroll-view">
+      <div style="font-size:22px;font-weight:800;color:var(--p2);margin-bottom:16px;">Statistiken 📊</div>
+      <div class="stats-toggle">
+        <button class="toggle-btn active" id="t7" onclick="setChartDays(7)">7 Tage</button>
+        <button class="toggle-btn" id="t14" onclick="setChartDays(14)">14 Tage</button>
+      </div>
+      <div class="glass" style="padding:16px;margin-bottom:20px;">
+        <div id="chart-container"><canvas id="chart-canvas"></canvas></div>
+      </div>
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+  </div>
+
+  <!-- GARDEN TAB -->
+  <div class="tab-content" id="tab-garden">
+    <div class="scroll-view">
+      <div class="garden-badge" id="garden-badge">🌸 Du hast 0 Blumen</div>
+      <div id="garden-canvas-wrap">
+        <canvas id="garden-canvas"></canvas>
+      </div>
+      <div class="info-card" style="margin-bottom:16px;">
+        <div class="info-toggle" onclick="toggleInfo()">
+          <span>ℹ️ Wie funktioniert das Beet?</span>
+          <span id="info-arrow">›</span>
+        </div>
+        <div class="info-body" id="info-body">
+          <p>🌱 Erreichst du dein Tagesziel, wächst eine neue Blume.</p>
+          <p style="margin-top:8px;">🥀 Schaffst du es nicht, welkt die letzte Blume.</p>
+          <p style="margin-top:8px;">💪 Am nächsten Tag Ziel geschafft? Blume gerettet!</p>
+          <p style="margin-top:8px;">❌ Zweimal hintereinander nicht geschafft? Blume ist weg.</p>
+          <p style="margin-top:8px;">🌸 Blumen-Stufen: 1–5 Sprössling • 6–15 Gänseblümchen • 16–30 Lavendel • 31–50 Sonnenblume • 51–75 Tulpe • 76+ Rose</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div class="tab-content" id="tab-settings">
+    <div class="scroll-view">
+      <div style="font-size:22px;font-weight:800;color:var(--p2);margin-bottom:20px;">Einstellungen ⚙️</div>
+      <div class="settings-section">
+        <div class="settings-label">Ziel & Reset</div>
+        <div class="setting-row">
+          <span class="setting-name">Tägliches Ziel</span>
+          <span class="setting-val" onclick="openGoalModal()" id="disp-goal">2500 ml</span>
+        </div>
+        <div class="setting-row">
+          <span class="setting-name">Reset-Zeit</span>
+          <span class="setting-val" onclick="openResetModal()" id="disp-reset">03:00</span>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">Darstellung</div>
+        <div class="setting-row" style="border-radius:var(--radius)!important;">
+          <span class="setting-name">Light Mode</span>
+          <div class="toggle-switch" id="light-toggle" onclick="toggleLightMode()"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">Gefässe</div>
+        <div id="vessel-settings-list"></div>
+        <button class="btn-primary" style="margin-top:10px;" onclick="openAddVesselModal()">+ Gefäss hinzufügen</button>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">Daten</div>
+        <button class="danger-btn" onclick="confirmReset()">🗑️ Alle Daten zurücksetzen</button>
+      </div>
+      <div class="app-version">Gluggy v1.0 • Mit 💜 gemacht</div>
+    </div>
+  </div>
+
+  <!-- TAB BAR -->
+  <div id="tabbar">
+    <button class="tab-btn active" onclick="switchTab('home',this)"><span class="tab-icon">🏠</span>Home</button>
+    <button class="tab-btn" onclick="switchTab('stats',this)"><span class="tab-icon">📊</span>Stats</button>
+    <button class="tab-btn" onclick="switchTab('garden',this)"><span class="tab-icon">🌸</span>Garten</button>
+    <button class="tab-btn" onclick="switchTab('settings',this)"><span class="tab-icon">⚙️</span>Settings</button>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="add-vessel-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Gefäss hinzufügen</div>
+    <input class="modal-input" type="text" id="vessel-name-input" placeholder="Name (z.B. Tasse)">
+    <input class="modal-input" type="number" id="vessel-ml-input" placeholder="Menge in ml" min="10" max="2000">
+    <div class="modal-row">
+      <button class="btn-secondary" onclick="closeModal('add-vessel-modal')">Abbrechen</button>
+      <button class="btn-primary" style="margin-top:0;" onclick="saveVessel()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="goal-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Tagesziel ändern</div>
+    <input class="modal-input" type="number" id="goal-input-modal" placeholder="ml" min="500" max="5000" step="100">
+    <div class="modal-row">
+      <button class="btn-secondary" onclick="closeModal('goal-modal')">Abbrechen</button>
+      <button class="btn-primary" style="margin-top:0;" onclick="saveGoal()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="reset-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Reset-Zeit ändern</div>
+    <input class="modal-input" type="time" id="reset-input-modal">
+    <div class="modal-row">
+      <button class="btn-secondary" onclick="closeModal('reset-modal')">Abbrechen</button>
+      <button class="btn-primary" style="margin-top:0;" onclick="saveReset()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<div class="confirm-dialog" id="confirm-reset-dialog">
+  <div class="confirm-box">
+    <div class="confirm-title">Wirklich zurücksetzen?</div>
+    <div class="confirm-msg">Alle Einträge, Blumen und Statistiken werden gelöscht.</div>
+    <div class="confirm-btns">
+      <button class="btn-secondary" onclick="closeConfirm()">Nein</button>
+      <button class="danger-btn" style="flex:1;" onclick="doReset()">Ja, löschen</button>
+    </div>
+  </div>
+</div>
+
+<div class="chart-tooltip" id="chart-tooltip"></div>
+
+<script>
+// ============ STATE & STORAGE ============
+let S = {
+  goal: 2500, resetTime: '03:00', lightMode: false,
+  vessels: [{name:'Glas',ml:200},{name:'Flasche',ml:500},{name:'Becher',ml:330},{name:'Krug',ml:1000}],
+  flowers: [], lastResetDate: '', lastCheckedDate: '',
+};
+let currentDate = todayKey();
+let chartDays = 7;
+let waveAnim = null;
+let waveOffset = 0;
+let waveBoost = 0;
+let currentPct = 0;
+let targetPct = 0;
+let animatingMl = false;
+let selectedVessel = null;
+let obStep = 0;
+
+function todayKey() {
+  const now = new Date();
+  return now.toISOString().split('T')[0];
+}
+function getDateKey(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().split('T')[0];
+}
+function getCurrentOffset() {
+  return Math.round((new Date(currentDate) - new Date(todayKey())) / 86400000);
+}
+function loadState() {
+  try { const v = localStorage.getItem('gluggy_state'); if(v) S = {...S, ...JSON.parse(v)}; } catch(e){}
+}
+function saveState() { localStorage.setItem('gluggy_state', JSON.stringify(S)); }
+function getLog(dateKey) {
+  try { return JSON.parse(localStorage.getItem('gluggy_log_'+dateKey)||'[]'); } catch(e){ return []; }
+}
+function setLog(dateKey, arr) { localStorage.setItem('gluggy_log_'+dateKey, JSON.stringify(arr)); }
+function getDayTotal(dateKey) { return getLog(dateKey).reduce((a,b)=>a+b.ml,0); }
+
+// ============ ONBOARDING ============
+function checkOnboarding() {
+  if(S.lastResetDate === '' && S.flowers.length === 0 && getLog(todayKey()).length === 0 && !localStorage.getItem('gluggy_setup')) {
+    document.getElementById('onboarding-overlay').style.display='flex';
+  } else {
+    document.getElementById('onboarding-overlay').style.display='none';
+  }
+}
+function obNext() {
+  if(obStep===0){
+    const g = parseInt(document.getElementById('ob-goal-input').value)||2500;
+    S.goal = Math.max(500,Math.min(5000,g));
+  }
+  if(obStep===1){
+    S.resetTime = document.getElementById('ob-reset-input').value||'03:00';
+  }
+  obStep++;
+  document.querySelectorAll('.onboarding-step').forEach((el,i)=>{ el.classList.toggle('active',i===obStep); });
+  document.querySelectorAll('.onboarding-dot').forEach((el,i)=>{ el.classList.toggle('active',i===obStep); });
+}
+function obFinish() {
+  S.lastResetDate = todayKey();
+  S.lastCheckedDate = todayKey();
+  saveState();
+  localStorage.setItem('gluggy_setup','1');
+  document.getElementById('onboarding-overlay').style.display='none';
+  renderAll();
+}
+// OB range/input sync
+document.getElementById('ob-goal-range').addEventListener('input',function(){
+  document.getElementById('ob-goal-input').value=this.value;
+  document.getElementById('ob-goal-label').textContent=this.value+' ml täglich';
+});
+document.getElementById('ob-goal-input').addEventListener('input',function(){
+  document.getElementById('ob-goal-range').value=this.value;
+  document.getElementById('ob-goal-label').textContent=(this.value||2500)+' ml täglich';
+});
+
+// ============ RESET LOGIC ============
+function checkDailyReset() {
+  const today = todayKey();
+  if(S.lastCheckedDate === today) return;
+  // Check if we passed reset time today
+  const now = new Date();
+  const [rh,rm] = (S.resetTime||'03:00').split(':').map(Number);
+  const resetMs = rh*3600000+rm*60000;
+  const todayMs = now.getHours()*3600000+now.getMinutes()*60000;
+  if(todayMs < resetMs) return; // Not yet reset time today
+  const prevDate = S.lastCheckedDate;
+  S.lastCheckedDate = today;
+  if(!prevDate || prevDate === today) { saveState(); return; }
+  const prevTotal = getDayTotal(prevDate);
+  const goalMet = prevTotal >= S.goal;
+  // Garden logic
+  const hasWilting = S.flowers.some(f=>f.status==='wilting');
+  if(goalMet) {
+    if(hasWilting) {
+      // Rescue wilting flower
+      const idx = S.flowers.findLastIndex(f=>f.status==='wilting');
+      if(idx>=0) S.flowers[idx].status='bloomed';
+    } else {
+      S.flowers.push({status:'bloomed',type:getFlowerType(S.flowers.length+1),seed:Math.random(),x:Math.random(),y:Math.random(),born:today});
+    }
+  } else {
+    if(hasWilting) {
+      // Second miss — flower gone, previous wilts
+      const wIdx = S.flowers.findLastIndex(f=>f.status==='wilting');
+      if(wIdx>=0) S.flowers[wIdx].status='gone';
+      const prevBloomed = S.flowers.findLastIndex(f=>f.status==='bloomed');
+      if(prevBloomed>=0) S.flowers[prevBloomed].status='wilting';
+    } else {
+      // First miss — last bloomed wilts
+      const lastBloomed = S.flowers.findLastIndex(f=>f.status==='bloomed');
+      if(lastBloomed>=0) S.flowers[lastBloomed].status='wilting';
+    }
+  }
+  S.lastResetDate = today;
+  saveState();
+}
+function getFlowerType(count) {
+  if(count<=5) return 'sprout';
+  if(count<=15) return 'daisy';
+  if(count<=30) return 'lavender';
+  if(count<=50) return 'sunflower';
+  if(count<=75) return 'tulip';
+  return 'rose';
+}
+// Recalculate all flowers from history
+function recalcFlowers() {
+  // Use existing flowers array — it's authoritative
+}
+
+// ============ TAB SWITCHING ============
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='stats') renderStats();
+  if(name==='garden') renderGarden();
+  if(name==='settings') renderSettings();
+  if(name==='home') renderHome();
+}
+
+// ============ DATE NAVIGATION ============
+function changeDay(dir) {
+  const offset = getCurrentOffset() + dir;
+  if(offset > 0) return; // Can't go to future
+  const d = new Date();
+  d.setDate(d.getDate()+offset);
+  currentDate = d.toISOString().split('T')[0];
+  document.getElementById('next-day-btn').style.opacity = offset===0?'0.3':'1';
+  document.getElementById('next-day-btn').style.pointerEvents = offset===0?'none':'auto';
+  updateDateDisplay();
+  renderHome();
+}
+function updateDateDisplay() {
+  const offset = getCurrentOffset();
+  const el = document.getElementById('date-display');
+  if(offset===0) el.textContent='Heute';
+  else if(offset===-1) el.textContent='Gestern';
+  else {
+    const d = new Date(currentDate+'T12:00:00');
+    el.textContent = d.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'short'});
+  }
+}
+
+// ============ HOME RENDER ============
+function renderHome() {
+  updateDateDisplay();
+  renderVessels();
+  renderLog();
+  updateWave(false);
+}
+function renderVessels() {
+  const wrap = document.getElementById('vessel-scroll');
+  wrap.innerHTML='';
+  S.vessels.forEach((v,i) => {
+    const el = document.createElement('button');
+    el.className = 'vessel-pill' + (selectedVessel===i?' selected':'');
+    el.textContent = v.name+' '+v.ml+'ml';
+    el.onclick = () => { selectedVessel=i; document.getElementById('ml-input').value=v.ml; renderVessels(); };
+    wrap.appendChild(el);
+  });
+  const add = document.createElement('button');
+  add.className='vessel-pill add-btn'; add.textContent='+';
+  add.onclick=()=>openAddVesselModal();
+  wrap.appendChild(add);
+}
+function renderLog() {
+  const list = document.getElementById('log-list');
+  const log = getLog(currentDate);
+  list.innerHTML='';
+  if(log.length===0) {
+    list.innerHTML='<div style="text-align:center;color:var(--text-muted);font-size:14px;padding:24px 0;">Noch nichts getrunken 💧</div>';
+    return;
+  }
+  [...log].reverse().forEach((entry,ri) => {
+    const realIdx = log.length-1-ri;
+    const el = document.createElement('div');
+    el.className='log-item';
+    el.innerHTML=`<div class="log-left"><span class="log-icon">💧</span><div><div class="log-ml">${entry.ml} ml</div><div class="log-time">${entry.time}</div></div></div><button class="log-delete" onclick="deleteEntry(${realIdx})">✕</button>`;
+    // Swipe to delete
+    let startX=0;
+    el.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;},{passive:true});
+    el.addEventListener('touchend',e=>{
+      const dx=e.changedTouches[0].clientX-startX;
+      if(dx>60){ deleteEntry(realIdx); }
+    },{passive:true});
+    list.appendChild(el);
+  });
+}
+
+// ============ WAVE ANIMATION ============
+function updateWave(animate) {
+  const total = getDayTotal(currentDate);
+  const pct = Math.min(total/S.goal,1);
+  targetPct = pct;
+  document.getElementById('wave-goal').textContent = '/ '+S.goal+' ml';
+  if(!animate) {
+    currentPct = pct;
+    document.getElementById('wave-ml').textContent = total;
+    document.getElementById('wave-pct').textContent = Math.round(pct*100)+'%';
+    drawWave(pct);
+  } else {
+    animateCountUp(getDayTotal(currentDate)-0, total, 600);
+  }
+  // Completion
+  if(pct>=1) triggerCompletion();
+}
+function animateCountUp(from, to, dur) {
+  if(animatingMl) return;
+  animatingMl=true;
+  const start=performance.now();
+  function step(now){
+    const t=Math.min((now-start)/dur,1);
+    const ease=1-Math.pow(1-t,3);
+    const val=Math.round(from+(to-from)*ease);
+    document.getElementById('wave-ml').textContent=val;
+    document.getElementById('wave-pct').textContent=Math.round(val/S.goal*100)+'%';
+    if(t<1) requestAnimationFrame(step);
+    else { animatingMl=false; document.getElementById('wave-ml').textContent=to; }
+  }
+  requestAnimationFrame(step);
+}
+function startWaveAnimation() {
+  if(waveAnim) return;
+  function loop() {
+    waveOffset += 0.025 + waveBoost*0.02;
+    if(waveBoost>0) waveBoost=Math.max(0,waveBoost-0.05);
+    drawWave(currentPct);
+    waveAnim = requestAnimationFrame(loop);
+  }
+  waveAnim = requestAnimationFrame(loop);
+}
+function drawWave(pct) {
+  const svg = document.getElementById('wave-svg');
+  const path = document.getElementById('wave-path');
+  const path2 = document.getElementById('wave-path2');
+  const h = 220;
+  const waterH = pct * h;
+  svg.style.height = waterH+'px';
+  if(waterH < 2) { path.setAttribute('d',''); path2.setAttribute('d',''); return; }
+  // Draw wave path
+  const w=220, amp=8+waveBoost*4, amp2=5+waveBoost*2;
+  let d='M 0 '+h;
+  for(let x=0;x<=w;x+=4) {
+    const y=(h-waterH)+Math.sin(x/30+waveOffset)*amp+Math.sin(x/18+waveOffset*1.3)*3;
+    d+=' L '+x+' '+y;
+  }
+  d+=' L '+w+' '+h+' Z';
+  path.setAttribute('d',d);
+  let d2='M 0 '+h;
+  for(let x=0;x<=w;x+=4) {
+    const y=(h-waterH+6)+Math.sin(x/25+waveOffset*0.8+1)*amp2;
+    d2+=' L '+x+' '+y;
+  }
+  d2+=' L '+w+' '+h+' Z';
+  path2.setAttribute('d',d2);
+  currentPct = pct;
+}
+function toggleWaveAnim() {
+  if(waveAnim) { cancelAnimationFrame(waveAnim); waveAnim=null; }
+  else startWaveAnimation();
+}
+startWaveAnimation();
+
+// ============ ADD DRINK ============
+function addDrink() {
+  const ml = parseInt(document.getElementById('ml-input').value)||0;
+  if(ml<10||ml>3000) return;
+  const log = getLog(currentDate);
+  const now = new Date();
+  const time = now.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  log.push({ml,time,ts:Date.now()});
+  setLog(currentDate, log);
+  // Haptic
+  if(navigator.vibrate) navigator.vibrate([30]);
+  // Ripple
+  const btn = document.getElementById('drink-btn');
+  const r = document.createElement('span');
+  r.className='ripple';
+  r.style.cssText='width:100px;height:100px;left:50%;top:50%;margin:-50px;';
+  btn.appendChild(r);
+  setTimeout(()=>r.remove(),700);
+  // Wave boost
+  waveBoost = 3;
+  updateWave(true);
+  renderLog();
+}
+function deleteEntry(idx) {
+  const log = getLog(currentDate);
+  const items = document.getElementById('log-list').children;
+  const ri = log.length-1-idx;
+  if(items[ri]) { items[ri].classList.add('deleting'); }
+  setTimeout(()=>{
+    log.splice(idx,1);
+    setLog(currentDate,log);
+    updateWave(false);
+    renderLog();
+  },300);
+  if(navigator.vibrate) navigator.vibrate([20,10,20]);
+}
+
+// ============ COMPLETION ============
+function triggerCompletion() {
+  const colors=['#a78bfa','#c4b5fd','#7c3aed','#ec4899','#f0abfc'];
+  for(let i=0;i<30;i++) {
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='confetti-piece';
+      el.style.cssText=`left:${20+Math.random()*60}%;top:30%;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-delay:${Math.random()*0.3}s;`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),2000);
+    },i*40);
+  }
+}
+
+// ============ STATS ============
+function setChartDays(n) {
+  chartDays=n;
+  document.getElementById('t7').classList.toggle('active',n===7);
+  document.getElementById('t14').classList.toggle('active',n===14);
+  renderStats();
+}
+function renderStats() {
+  renderBarChart();
+  renderStatCards();
+}
+function renderBarChart() {
+  const canvas=document.getElementById('chart-canvas');
+  const wrap=document.getElementById('chart-container');
+  canvas.width=wrap.offsetWidth*window.devicePixelRatio||300;
+  canvas.height=180*window.devicePixelRatio||180;
+  canvas.style.width=wrap.offsetWidth+'px';
+  canvas.style.height='180px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio,window.devicePixelRatio);
+  const W=wrap.offsetWidth, H=180;
+  ctx.clearRect(0,0,W,H);
+  const days=[];
+  for(let i=chartDays-1;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const key=d.toISOString().split('T')[0];
+    const total=getDayTotal(key);
+    days.push({key,total,label:d.toLocaleDateString('de-DE',{weekday:'short'})});
+  }
+  const maxVal=Math.max(S.goal*1.2,...days.map(d=>d.total),100);
+  const pad={l:8,r:8,t:10,b:28};
+  const barW=(W-pad.l-pad.r)/chartDays-6;
+  // Goal line
+  const goalY=pad.t+(H-pad.t-pad.b)*(1-S.goal/maxVal);
+  ctx.setLineDash([4,4]);
+  ctx.strokeStyle='rgba(196,181,253,0.4)';
+  ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,goalY);ctx.lineTo(W-pad.r,goalY);ctx.stroke();
+  ctx.setLineDash([]);
+  days.forEach((d,i) => {
+    const x=pad.l+i*(barW+6)+1;
+    const barH=(H-pad.t-pad.b)*Math.min(d.total/maxVal,1);
+    const y=H-pad.b-barH;
+    const met=d.total>=S.goal;
+    const grad=ctx.createLinearGradient(0,y,0,H-pad.b);
+    if(met){grad.addColorStop(0,'rgba(167,139,250,0.9)');grad.addColorStop(1,'rgba(76,29,149,0.6)');}
+    else{grad.addColorStop(0,'rgba(100,80,160,0.5)');grad.addColorStop(1,'rgba(60,40,120,0.3)');}
+    ctx.fillStyle=grad;
+    const r=Math.min(6,barW/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);ctx.lineTo(x+barW-r,y);
+    ctx.arcTo(x+barW,y,x+barW,y+r,r);ctx.lineTo(x+barW,H-pad.b);
+    ctx.lineTo(x,H-pad.b);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();
+    ctx.fill();
+    if(met){ctx.shadowColor='rgba(167,139,250,0.5)';ctx.shadowBlur=8;ctx.fill();ctx.shadowBlur=0;}
+    ctx.fillStyle='rgba(196,181,253,0.55)';
+    ctx.font='10px system-ui';ctx.textAlign='center';
+    ctx.fillText(d.label,x+barW/2,H-6);
+  });
+  // Touch tooltip
+  canvas.onclick=function(e){
+    const rect=canvas.getBoundingClientRect();
+    const mx=e.clientX-rect.left;
+    days.forEach((d,i) => {
+      const x=pad.l+i*(barW+6)+1;
+      if(mx>=x&&mx<=x+barW){
+        const tt=document.getElementById('chart-tooltip');
+        tt.textContent=d.label+': '+d.total+' ml';
+        tt.style.display='block';
+        tt.style.left=(e.clientX-40)+'px';
+        tt.style.top=(e.clientY-40)+'px';
+        setTimeout(()=>tt.style.display='none',2000);
+      }
+    });
+  };
+}
+function renderStatCards() {
+  const grid=document.getElementById('stats-grid');
+  // Calc stats
+  let streak=0,maxStreak=0,cur=0;
+  const today=todayKey();
+  let i=0;
+  while(true){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const k=d.toISOString().split('T')[0];
+    if(getDayTotal(k)>=S.goal){cur++;i++;}
+    else if(i===0){i++;} // today not finished yet
+    else break;
+  }
+  streak=cur;
+  let ms=0,mc=0,histStart=30;
+  for(let j=0;j<365;j++){
+    const d=new Date();d.setDate(d.getDate()-j);
+    const k=d.toISOString().split('T')[0];
+    if(getDayTotal(k)>=S.goal){mc++;}else{ms=Math.max(ms,mc);mc=0;}
+  }
+  maxStreak=Math.max(ms,mc);
+  let sum7=0,best=0,success=0;
+  for(let j=0;j<365;j++){
+    const d=new Date();d.setDate(d.getDate()-j);
+    const k=d.toISOString().split('T')[0];
+    const t=getDayTotal(k);
+    if(j<7)sum7+=t;
+    if(t>best)best=t;
+    if(t>=S.goal)success++;
+  }
+  const avg7=Math.round(sum7/7);
+  const bloomed=S.flowers.filter(f=>f.status==='bloomed').length;
+  const stats=[
+    {icon:'🔥',val:streak,label:'Aktuelle Streak'},
+    {icon:'🏆',val:maxStreak,label:'Längste Streak'},
+    {icon:'💧',val:avg7+' ml',label:'Ø letzte 7 Tage'},
+    {icon:'📅',val:best+' ml',label:'Bestes Tagesergebnis'},
+    {icon:'✅',val:success,label:'Erfolgstage gesamt'},
+    {icon:'🌸',val:bloomed,label:'Blumen im Garten'},
+  ];
+  grid.innerHTML=stats.map(s=>`<div class="stat-card"><div class="stat-icon">${s.icon}</div><div class="stat-val">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
+}
+
+// ============ GARDEN ============
+function renderGarden() {
+  const visible=S.flowers.filter(f=>f.status!=='gone');
+  const bloomed=S.flowers.filter(f=>f.status==='bloomed').length;
+  document.getElementById('garden-badge').textContent='🌸 Du hast '+bloomed+' Blumen';
+  const wrap=document.getElementById('garden-canvas-wrap');
+  const canvas=document.getElementById('garden-canvas');
+  canvas.width=wrap.offsetWidth*window.devicePixelRatio;
+  canvas.height=wrap.offsetHeight*window.devicePixelRatio;
+  canvas.style.width=wrap.offsetWidth+'px';
+  canvas.style.height=wrap.offsetHeight+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio,window.devicePixelRatio);
+  const W=wrap.offsetWidth, H=wrap.offsetHeight;
+  ctx.clearRect(0,0,W,H);
+  // Ground
+  const groundH=H*0.22;
+  const groundGrad=ctx.createLinearGradient(0,H-groundH,0,H);
+  groundGrad.addColorStop(0,'rgba(34,80,20,0.35)');
+  groundGrad.addColorStop(1,'rgba(20,50,10,0.55)');
+  ctx.fillStyle=groundGrad;
+  ctx.beginPath();ctx.ellipse(W/2,H-groundH/4,W*0.52,groundH/2,0,0,Math.PI*2);ctx.fill();
+  // Sky gradient
+  const skyGrad=ctx.createLinearGradient(0,0,0,H-groundH);
+  skyGrad.addColorStop(0,'rgba(76,29,149,0.05)');
+  skyGrad.addColorStop(1,'rgba(100,50,180,0.08)');
+  ctx.fillStyle=skyGrad;ctx.fillRect(0,0,W,H-groundH);
+  if(visible.length===0){
+    ctx.fillStyle='rgba(196,181,253,0.3)';
+    ctx.font='16px system-ui';ctx.textAlign='center';
+    ctx.fillText('Noch keine Blumen 🌱',W/2,H/2);
+    ctx.font='13px system-ui';ctx.fillStyle='rgba(196,181,253,0.2)';
+    ctx.fillText('Erreiche dein Tagesziel!',W/2,H/2+24);
+    return;
+  }
+  // Draw flowers
+  visible.forEach((f,i) => {
+    // Seeded position
+    const seed=f.seed||0.5;
+    const sx=f.x||seed;
+    const sy=f.y||Math.random();
+    // Spread across width with margin
+    const mx=W*0.1+sx*(W*0.8);
+    const baseY=H-(groundH*0.5)-(sy*(H*0.25));
+    const wilting=f.status==='wilting';
+    const scale=0.7+seed*0.4;
+    ctx.save();
+    ctx.translate(mx,baseY);
+    if(wilting){ctx.rotate(0.3+seed*0.2);ctx.globalAlpha=0.45;}
+    else ctx.globalAlpha=0.9+seed*0.1;
+    drawFlower(ctx,f.type||getFlowerType(i+1),scale,wilting);
+    ctx.restore();
+  });
+}
+function drawFlower(ctx,type,scale,wilting){
+  const s=scale*28;
+  const stemH=s*1.8;
+  // Stem
+  const stemColor=wilting?'rgba(100,120,80,0.5)':'rgba(80,160,60,0.8)';
+  ctx.strokeStyle=stemColor;ctx.lineWidth=2.5*scale;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,-stemH);ctx.stroke();
+  // Leaves
+  if(!wilting){
+    ctx.fillStyle='rgba(80,160,60,0.5)';
+    ctx.beginPath();ctx.ellipse(-s*0.5,-stemH*0.45,s*0.35,s*0.18,-0.5,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(s*0.4,-stemH*0.7,s*0.3,s*0.15,0.5,0,Math.PI*2);ctx.fill();
+  }
+  const cx=0, cy=-stemH;
+  // Flower head by type
+  if(type==='sprout'){
+    ctx.fillStyle=wilting?'rgba(150,130,80,0.5)':'rgba(140,220,100,0.9)';
+    ctx.beginPath();ctx.ellipse(cx,cy,s*0.4,s*0.6,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(100,200,70,0.6)';
+    ctx.beginPath();ctx.ellipse(cx-s*0.25,cy+s*0.1,s*0.25,s*0.45,-0.4,0,Math.PI*2);ctx.fill();
+  } else if(type==='daisy'){
+    const petals=8;
+    ctx.fillStyle=wilting?'rgba(180,160,140,0.4)':'rgba(250,250,250,0.9)';
+    for(let p=0;p<petals;p++){
+      const a=(p/petals)*Math.PI*2;
+      ctx.beginPath();ctx.ellipse(cx+Math.cos(a)*s*0.55,cy+Math.sin(a)*s*0.55,s*0.2,s*0.38,a,0,Math.PI*2);ctx.fill();
+    }
+    ctx.fillStyle=wilting?'rgba(180,140,60,0.5)':'rgba(250,220,50,0.95)';
+    ctx.beginPath();ctx.arc(cx,cy,s*0.32,0,Math.PI*2);ctx.fill();
+  } else if(type==='lavender'){
+    const colors=wilting?['rgba(160,140,180,0.35)']:['rgba(180,140,220,0.85)','rgba(160,100,200,0.7)','rgba(200,160,240,0.75)'];
+    for(let row=0;row<4;row++){
+      const y=cy+row*s*0.38;
+      const cnt=3-Math.floor(row/2);
+      for(let b=0;b<cnt;b++){
+        const bx=cx+(b-(cnt-1)/2)*s*0.32;
+        ctx.fillStyle=colors[b%colors.length]||colors[0];
+        ctx.beginPath();ctx.ellipse(bx,y,s*0.13,s*0.22,0,0,Math.PI*2);ctx.fill();
+      }
+    }
+  } else if(type==='sunflower'){
+    const petals=13;
+    ctx.fillStyle=wilting?'rgba(180,150,50,0.4)':'rgba(250,190,20,0.9)';
+    for(let p=0;p<petals;p++){
+      const a=(p/petals)*Math.PI*2;
+      ctx.beginPath();ctx.ellipse(cx+Math.cos(a)*s*0.62,cy+Math.sin(a)*s*0.62,s*0.17,s*0.42,a,0,Math.PI*2);ctx.fill();
+    }
+    ctx.fillStyle=wilting?'rgba(100,70,30,0.4)':'rgba(80,40,10,0.92)';
+    ctx.beginPath();ctx.arc(cx,cy,s*0.38,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(150,100,40,0.4)';
+    for(let d=0;d<5;d++){ctx.beginPath();ctx.arc(cx+(Math.random()-0.5)*s*0.5,cy+(Math.random()-0.5)*s*0.5,s*0.08,0,Math.PI*2);ctx.fill();}
+  } else if(type==='tulip'){
+    ctx.fillStyle=wilting?'rgba(180,100,100,0.35)':'rgba(230,60,100,0.85)';
+    ctx.beginPath();
+    ctx.moveTo(cx,cy-s*0.7);
+    ctx.bezierCurveTo(cx+s*0.5,cy-s*0.7,cx+s*0.55,cy,cx+s*0.2,cy+s*0.2);
+    ctx.lineTo(cx-s*0.2,cy+s*0.2);
+    ctx.bezierCurveTo(cx-s*0.55,cy,cx-s*0.5,cy-s*0.7,cx,cy-s*0.7);
+    ctx.fill();
+    ctx.fillStyle=wilting?'rgba(210,80,80,0.25)':'rgba(255,100,130,0.5)';
+    ctx.beginPath();ctx.ellipse(cx,cy-s*0.3,s*0.15,s*0.5,0,0,Math.PI*2);ctx.fill();
+  } else { // rose
+    const petals=12;
+    for(let layer=2;layer>=0;layer--){
+      const n=petals-layer*3;
+      ctx.fillStyle=wilting?`rgba(180,80,120,${0.25+layer*0.05})`:`rgba(220,40,80,${0.6+layer*0.15})`;
+      for(let p=0;p<n;p++){
+        const a=(p/n)*Math.PI*2+layer*0.3;
+        const r=s*(0.3+layer*0.15);
+        ctx.beginPath();ctx.ellipse(cx+Math.cos(a)*r*0.4,cy+Math.sin(a)*r*0.4,s*(0.15+layer*0.05),s*(0.25+layer*0.08),a,0,Math.PI*2);ctx.fill();
+      }
+    }
+    ctx.fillStyle=wilting?'rgba(180,60,80,0.3)':'rgba(240,60,90,0.95)';
+    ctx.beginPath();ctx.arc(cx,cy,s*0.2,0,Math.PI*2);ctx.fill();
+  }
+}
+
+// ============ SETTINGS ============
+function renderSettings() {
+  document.getElementById('disp-goal').textContent=S.goal+' ml';
+  document.getElementById('disp-reset').textContent=S.resetTime;
+  const lt=document.getElementById('light-toggle');
+  lt.classList.toggle('on',S.lightMode);
+  renderVesselSettings();
+}
+function renderVesselSettings() {
+  const list=document.getElementById('vessel-settings-list');
+  list.innerHTML=S.vessels.map((v,i)=>`<div class="vessel-setting-row"><span style="font-size:15px;font-weight:500;">${v.name} — ${v.ml}ml</span><button class="vessel-del-btn" onclick="deleteVessel(${i})">✕</button></div>`).join('');
+}
+function toggleLightMode() {
+  S.lightMode=!S.lightMode;
+  document.body.classList.toggle('light-mode',S.lightMode);
+  document.getElementById('light-toggle').classList.toggle('on',S.lightMode);
+  saveState();
+}
+function openGoalModal() {
+  document.getElementById('goal-input-modal').value=S.goal;
+  document.getElementById('goal-modal').classList.add('open');
+}
+function saveGoal() {
+  const v=parseInt(document.getElementById('goal-input-modal').value)||2500;
+  S.goal=Math.max(500,Math.min(5000,v));
+  saveState();
+  closeModal('goal-modal');
+  renderSettings();
+  updateWave(false);
+}
+function openResetModal() {
+  document.getElementById('reset-input-modal').value=S.resetTime;
+  document.getElementById('reset-modal').classList.add('open');
+}
+function saveReset() {
+  S.resetTime=document.getElementById('reset-input-modal').value||'03:00';
+  saveState();
+  closeModal('reset-modal');
+  renderSettings();
+}
+function openAddVesselModal() {
+  document.getElementById('vessel-name-input').value='';
+  document.getElementById('vessel-ml-input').value='';
+  document.getElementById('add-vessel-modal').classList.add('open');
+}
+function saveVessel() {
+  const name=document.getElementById('vessel-name-input').value.trim();
+  const ml=parseInt(document.getElementById('vessel-ml-input').value)||0;
+  if(!name||ml<10) return;
+  S.vessels.push({name,ml});
+  saveState();
+  closeModal('add-vessel-modal');
+  renderVessels();
+  renderVesselSettings();
+}
+function deleteVessel(i) {
+  S.vessels.splice(i,1);
+  saveState();
+  renderVesselSettings();
+  renderVessels();
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function confirmReset() { document.getElementById('confirm-reset-dialog').classList.add('open'); }
+function closeConfirm() { document.getElementById('confirm-reset-dialog').classList.remove('open'); }
+function doReset() {
+  Object.keys(localStorage).forEach(k=>{ if(k.startsWith('gluggy')) localStorage.removeItem(k); });
+  location.reload();
+}
+
+// ============ INFO FOLD ============
+function toggleInfo() {
+  const b=document.getElementById('info-body');
+  const a=document.getElementById('info-arrow');
+  b.classList.toggle('open');
+  a.textContent=b.classList.contains('open')?'˅':'›';
+}
+
+// ============ INIT ============
+function renderAll() {
+  renderHome();
+  updateDateDisplay();
+}
+loadState();
+checkDailyReset();
+if(S.lightMode) document.body.classList.add('light-mode');
+checkOnboarding();
+renderAll();
+// Start wave
+setTimeout(()=>updateWave(false),100);
+</script>
+</body>
+</html>
